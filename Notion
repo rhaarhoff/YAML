@@ -1,0 +1,2505 @@
+openapi: 3.0.0
+info:
+  title: Notion API
+  version: 1.0.0
+servers:
+  - url: https://api.notion.com
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  schemas: {}
+security:
+  - bearerAuth: []
+tags:
+  - name: Users
+paths:
+  /v1/users:
+    get:
+      operationId: listAllUsers
+      tags:
+        - Users
+      summary: List all users
+      description: Returns a paginated list of user objects for a workspace
+      parameters:
+        - name: Notion-Version
+          in: header
+          schema:
+            type: string
+          example: 2022-06-28
+      responses:
+        "200":
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    example: list
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        object:
+                          type: string
+                        id:
+                          type: string
+                        name:
+                          type: string
+                        avatar_url:
+                          type: string
+                          nullable: true
+                        type:
+                          type: string
+                        person:
+                          type: object
+                          properties:
+                            email:
+                              type: string
+                        bot:
+                          type: object
+                          properties:
+                            owner:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                workspace:
+                                  type: boolean
+                  next_cursor:
+                    type: string
+                    nullable: true
+                  has_more:
+                    type: boolean
+                example:
+                  object: list
+                  results:
+                    - object: user
+                      id: 6794760a-1f15-45cd-9c65-0dfe42f5135a
+                      name: Aman Gupta
+                      avatar_url: null
+                      type: person
+                      person:
+                        email: XXXXXXXXXX
+                    - object: user
+                      id: 92a680bb-6970-4726-952b-4f4c03bff617
+                      name: Leotastic
+                      avatar_url: null
+                      type: bot
+                      bot:
+                        owner:
+                          type: workspace
+                          workspace: true
+                  next_cursor: null
+                  has_more: false
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                example:
+                  error: Invalid request parameters
+  /v1/users/{id}:
+    get:
+      operationId: getUserById
+      tags:
+        - Users
+      summary: Retrieve a user
+      description: Retrieve a user object using the ID specified in the request path.
+      parameters:
+        - name: Notion-Version
+          in: header
+          schema:
+            type: string
+          example: 2022-06-28
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+          example: "{{USER_ID}}"
+      responses:
+        "200":
+          description: User details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  avatar_url:
+                    type: string
+                    nullable: true
+                  type:
+                    type: string
+                  person:
+                    type: object
+                    properties:
+                      email:
+                        type: string
+                example:
+                  object: user
+                  id: 6794760a-1f15-45cd-9c65-0dfe42f5135a
+                  name: Aman Gupta
+                  avatar_url: null
+                  type: person
+                  person:
+                    email: XXXXXXXXXXX
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                example:
+                  error: Invalid request parameters
+  /v1/users/me:
+    get:
+      operationId: getBotUser
+      tags:
+        - Users
+      summary: Retrieve your token's bot user
+      parameters:
+        - name: Notion-Version
+          in: header
+          schema:
+            type: string
+          example: 2022-06-28
+      responses:
+        "200":
+          description: Bot user details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                  id:
+                    type: string
+                  name:
+                    type: string
+                  avatar_url:
+                    type: string
+                    nullable: true
+                  type:
+                    type: string
+                  bot:
+                    type: object
+                    properties:
+                      owner:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          workspace:
+                            type: boolean
+                example:
+                  object: user
+                  id: 92a680bb-6970-4726-952b-4f4c03bff617
+                  name: Leotastic
+                  avatar_url: null
+                  type: bot
+                  bot:
+                    owner:
+                      type: workspace
+                      workspace: true
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                example:
+                  error: Invalid request parameters
+  /v1/pages/{id}:
+    get:
+      operationId: getPageById
+      tags:
+        - Pages
+      summary: Retrieve a page
+      description: Retrieves a Page object using the ID in the request path. This endpoint exposes page properties, not page
+        content.
+      parameters:
+        - name: Notion-Version
+          in: header
+          schema:
+            type: string
+          example: 2022-06-28
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+          example: "{{PAGE_ID}}"
+      responses:
+        "200":
+          description: Page details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                  id:
+                    type: string
+                  created_time:
+                    type: string
+                  last_edited_time:
+                    type: string
+                  icon:
+                    type: object
+                  cover:
+                    type: object
+                  parent:
+                    type: object
+                  archived:
+                    type: boolean
+                  properties:
+                    type: object
+                example:
+                  object: page
+                  id: c4d39556-6364-46a1-8a61-ebbb668f7445
+                  created_time: 2021-04-27T20:38:00.000Z
+                  last_edited_time: 2022-03-02T05:22:00.000Z
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                example:
+                  error: Invalid request parameters
+        "404":
+          description: Page not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  code:
+                    type: string
+                  message:
+                    type: string
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                  code:
+                    type: string
+                  message:
+                    type: string
+    patch:
+      tags:
+        - Pages
+      summary: Update page properties
+      operationId: updatePageProperties
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                archived:
+                  type: boolean
+              example:
+                archived: true
+      parameters:
+        - name: Notion-Version
+          in: header
+          required: true
+          schema:
+            type: string
+          example: '2022-06-28'
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: '2646ac0d-df90-4bab-bb4e-75e3cb972ed1'
+      responses:
+        '200':
+          description: Page successfully archived
+          headers:
+            Date:
+              schema:
+                type: string
+                example: Thu, 24 Feb 2022 22:15:15 GMT
+            Content-Type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            Set-Cookie:
+              schema:
+                type: string
+                example: "notion_check_cookie_consent=false; Domain=www.notion.so; Path=/; Expires=Fri, 25 Feb 2022 22:15:15 GMT; Secure"
+            X-DNS-Prefetch-Control:
+              schema:
+                type: string
+                example: 'off'
+            X-Frame-Options:
+              schema:
+                type: string
+                example: SAMEORIGIN
+            Strict-Transport-Security:
+              schema:
+                type: string
+                example: "max-age=5184000; includeSubDomains"
+            X-Download-Options:
+              schema:
+                type: string
+                example: noopen
+            X-Content-Type-Options:
+              schema:
+                type: string
+                example: nosniff
+            X-XSS-Protection:
+              schema:
+                type: string
+                example: "1; mode=block"
+            Referrer-Policy:
+              schema:
+                type: string
+                example: same-origin
+            Content-Security-Policy:
+              schema:
+                type: string
+                example: "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://gist.github.com https://apis.google.com ...; connect-src 'self' https://msgstore.www.notion.so wss://msgstore.www.notion.so ws://localhost:* ws://127.0.0.1:* ..."
+            X-Content-Security-Policy:
+              schema:
+                type: string
+                example: "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://gist.github.com https://apis.google.com ...; connect-src 'self' https://msgstore.www.notion.so wss://msgstore.www.notion.so ws://localhost:* ws://127.0.0.1:* ..."
+            X-WebKit-CSP:
+              schema:
+                type: string
+                example: "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://gist.github.com https://apis.google.com ...; connect-src 'self' https://msgstore.www.notion.so wss://msgstore.www.notion.so ws://localhost:* ws://127.0.0.1:* ..."
+            ETag:
+              schema:
+                type: string
+                example: W/"183-KR1/QI68/l2Jn+MwQsjthIPU2oM"
+            Vary:
+              schema:
+                type: string
+                example: Accept-Encoding
+            Content-Encoding:
+              schema:
+                type: string
+                example: gzip
+            CF-Cache-Status:
+              schema:
+                type: string
+                example: DYNAMIC
+            Expect-CT:
+              schema:
+                type: string
+                example: "max-age=604800, report-uri='https://report-uri.cloudflare.com/cdn-cgi/beacon/expect-ct'"
+            Server:
+              schema:
+                type: string
+                example: cloudflare
+            CF-RAY:
+              schema:
+                type: string
+                example: 6e2c0d2f4884255c-SJC
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    example: block
+                  id:
+                    type: string
+                    example: 2646ac0d-df90-4bab-bb4e-75e3cb972ed1
+                  created_time:
+                    type: string
+                    example: '2022-02-24T22:14:00.000Z'
+                  last_edited_time:
+                    type: string
+                    example: '2022-02-24T22:15:00.000Z'
+                  created_by:
+                    type: object
+                    properties:
+                      object:
+                        type: string
+                        example: user
+                      id:
+                        type: string
+                        example: 6794760a-1f15-45cd-9c65-0dfe42f5135a
+                  last_edited_by:
+                    type: object
+                    properties:
+                      object:
+                        type: string
+                        example: user
+                      id:
+                        type: string
+                        example: 92a680bb-6970-4726-952b-4f4c03bff617
+                  has_children:
+                    type: boolean
+                    example: false
+                  archived:
+                    type: boolean
+                    example: true
+                  type:
+                    type: string
+                    example: child_page
+                  child_page:
+                    type: object
+                    properties:
+                      title:
+                        type: string
+                        example: 'Archived Page Title'
+                example:
+                  object: block
+                  id: 2646ac0d-df90-4bab-bb4e-75e3cb972ed1
+                  created_time: '2022-02-24T22:14:00.000Z'
+                  last_edited_time: '2022-02-24T22:15:00.000Z'
+                  created_by:
+                    object: user
+                    id: 6794760a-1f15-45cd-9c65-0dfe42f5135a
+                  last_edited_by:
+                    object: user
+                    id: 92a680bb-6970-4726-952b-4f4c03bff617
+                  has_children: false
+                  archived: true
+                  type: child_page
+                  child_page:
+                    title: 'Archived Page Title'
+  /v1/blocks/{id}/children:
+    get:
+      operationId: getBlockChildren
+      tags:
+        - Blocks
+      summary: Retrieve block children
+      parameters:
+        - name: Notion-Version
+          in: header
+          schema:
+            type: string
+          example: 2022-06-28
+        - name: page_size
+          in: query
+          schema:
+            type: integer
+          example: 100
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+          example: "{{PAGE_ID}}"
+      responses:
+        "200":
+          description: Block children retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    example: list
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        object:
+                          type: string
+                          example: block
+                        id:
+                          type: string
+                          example: 48c1ffb5-2789-4025-937b-2c35eaaaab3f
+                        created_time:
+                          type: string
+                          example: 2021-04-27T20:38:19.437Z
+                        last_edited_time:
+                          type: string
+                          example: 2021-04-27T20:38:19.437Z
+                        has_children:
+                          type: boolean
+                          example: false
+                        type:
+                          type: string
+                          example: paragraph
+                        paragraph:
+                          type: object
+                          properties:
+                            text:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                    example: text
+                                  text:
+                                    type: object
+                                    properties:
+                                      content:
+                                        type: string
+                                        example: Example text content
+                                      link:
+                                        type: string
+                  next_cursor:
+                    type: string
+                    example: null
+                  has_more:
+                    type: boolean
+                    example: false
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                example:
+                  error: Invalid request parameters
+    patch:
+      tags:
+        - Blocks
+      summary: Append block children
+      operationId: appendBlockChildren
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                children:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      object:
+                        type: string
+                        example: block
+                      type:
+                        type: string
+                        example: heading_2
+                      heading_2:
+                        type: object
+                        properties:
+                          rich_text:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                text:
+                                  type: object
+                                  properties:
+                                    content:
+                                      type: string
+                                    link:
+                                      type: object
+                                      properties:
+                                        url:
+                                          type: string
+      parameters:
+        - name: Notion-Version
+          in: header
+          required: true
+          schema:
+            type: string
+          example: '2022-06-28'
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: '{{BLOCK_ID}}'
+      responses:
+        '200':
+          description: Successfully appended block children
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    example: block
+                  id:
+                    type: string
+                    example: a1712d54-53e4-4893-a69d-4d581cd2c845
+                  created_time:
+                    type: string
+                    format: date-time
+                  last_edited_time:
+                    type: string
+                    format: date-time
+                  has_children:
+                    type: boolean
+                  archived:
+                    type: boolean
+                  type:
+                    type: string
+                  heading_2:
+                    type: object
+                    properties:
+                      rich_text:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                            text:
+                              type: object
+                              properties:
+                                content:
+                                  type: string
+                                link:
+                                  type: object
+                                  properties:
+                                    url:
+                                      type: string
+                  paragraph:
+                    type: object
+                    properties:
+                      rich_text:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                            text:
+                              type: object
+                              properties:
+                                content:
+                                  type: string
+                                link:
+                                  type: object
+                                  properties:
+                                    url:
+                                      type: string
+                  to_do:
+                    type: object
+                    properties:
+                      rich_text:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                            text:
+                              type: object
+                              properties:
+                                content:
+                                  type: string
+                                link:
+                                  type: object
+                                  properties:
+                                    url:
+                                      type: string  
+                  bulleted_list_item:
+                    type: object
+                    properties:
+                      rich_text:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                            text:
+                              type: object
+                              properties:
+                                content:
+                                  type: string
+                                link:
+                                  type: object
+                                  properties:
+                                    url:
+                                      type: string
+                  quote:
+                    type: object
+                    properties:
+                      rich_text:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                            text:
+                              type: object
+                              properties:
+                                content:
+                                  type: string
+                                link:
+                                  type: object
+                                  properties:
+                                    url:
+                                      type: string
+                  callout:
+                    type: object
+                    properties:
+                      rich_text:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                            text:
+                              type: object
+                              properties:
+                                content:
+                                  type: string
+                                link:
+                                  type: object
+                                  properties:
+                                    url:
+                                      type: string
+                  icon:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      emoji:
+                        type: string
+                  toggle:
+                    type: object
+                    properties:
+                      rich_text:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                            text:
+                              type: object
+                              properties:
+                                content:
+                                  type: string
+                                link:
+                                  type: object
+                                  properties:
+                                    url:
+                                      type: string
+                  children:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        object:
+                          type: string
+                        type:
+                          type: string
+                        heading_2:
+                          type: object
+                          properties:
+                            rich_text:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                  text:
+                                    type: object
+                                    properties:
+                                      content:
+                                        type: string
+                                      link:
+                                        type: object
+                                        properties:
+                                          url:
+                                            type: string
+                        paragraph:
+                          type: object
+                          properties:
+                            rich_text:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                  text:
+                                    type: object
+                                    properties:
+                                      content:
+                                        type: string
+                                      link:
+                                        type: object
+                                        properties:
+                                          url:
+                                            type: string
+                        to_do:
+                          type: object
+                          properties:
+                            rich_text:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                  text:
+                                    type: object
+                                    properties:
+                                      content:
+                                        type: string
+                                      link:
+                                        type: object
+                                        properties:
+                                          url:
+                                            type: string  
+                        bulleted_list_item:
+                          type: object
+                          properties:
+                            rich_text:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                  text:
+                                    type: object
+                                    properties:
+                                      content:
+                                        type: string
+                                      link:
+                                        type: object
+                                        properties:
+                                          url:
+                                            type: string
+                        quote:
+                          type: object
+                          properties:
+                            rich_text:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                  text:
+                                    type: object
+                                    properties:
+                                      content:
+                                        type: string
+                                      link:
+                                        type: object
+                                        properties:
+                                          url:
+                                            type: string
+                        callout:
+                          type: object
+                          properties:
+                            rich_text:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                  text:
+                                    type: object
+                                    properties:
+                                      content:
+                                        type: string
+                                      link:
+                                        type: object
+                                        properties:
+                                          url:
+                                            type: string
+                        icon:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                            emoji:
+                              type: string
+                        toggle:
+                          type: object
+                          properties:
+                            rich_text:
+                              type: array
+                              items:
+                                type: object
+                                properties:
+                                  type:
+                                    type: string
+                                  text:
+                                    type: object
+                                    properties:
+                                      content:
+                                        type: string
+                                      link:
+                                        type: object
+                                        properties:
+                                          url:
+                                            type: string
+  /v1/search:                                           
+    post:
+      tags:
+        - Search
+      summary: Search
+      operationId: searchNotion
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                query:
+                  type: string
+                sort:
+                  type: object
+                  properties:
+                    direction:
+                      type: string
+                      enum:
+                        - ascending
+                        - descending
+                    timestamp:
+                      type: string
+              example:
+                query: Media Article
+                sort:
+                  direction: ascending
+                  timestamp: last_edited_time
+      parameters:
+        - name: Notion-Version
+          in: header
+          schema:
+            type: string
+          example: 2022-06-28
+      responses:
+        "200":
+          description: Search results returned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    example: list
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        object:
+                          type: string
+                          example: page
+                        id:
+                          type: string
+                          example: ae1905c3-b77b-475b-b98f-7596c242137f
+                        created_time:
+                          type: string
+                          example: 2021-05-21T16:41:00.000Z
+                        last_edited_time:
+                          type: string
+                          example: 2021-05-21T16:41:00.000Z
+                        created_by:
+                          type: object
+                          properties:
+                            object:
+                              type: string
+                              example: user
+                            id:
+                              type: string
+                              example: 92a680bb-6970-4726-952b-4f4c03bff617
+                        last_edited_by:
+                          type: object
+                          properties:
+                            object:
+                              type: string
+                              example: user
+                            id:
+                              type: string
+                              example: 92a680bb-6970-4726-952b-4f4c03bff617
+                        cover:
+                          type: object
+                          nullable: true
+                          properties:
+                            type:
+                              type: string
+                              example: external
+                            external:
+                              type: object
+                              properties:
+                                url:
+                                  type: string
+                                  example: https://example.com/image.png
+                        icon:
+                          type: object
+                          nullable: true
+                          properties:
+                            type:
+                              type: string
+                              example: emoji
+                            emoji:
+                              type: string
+                              example: 😀
+                        parent:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              example: database_id
+                            database_id:
+                              type: string
+                              example: 8e2c2b76-9e1d-47d2-87b9-ed3035d607ae
+                        archived:
+                          type: boolean
+                          example: false
+                        properties:
+                          type: object
+                  next_cursor:
+                    type: string
+                    nullable: true
+                    example: null
+                  has_more:
+                    type: boolean
+                    example: false
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                example:
+                  error: Invalid request parameters
+        "429":
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                example:
+                  error: Rate limit exceeded
+  /v1/pages/:
+    post:
+      operationId: createPage
+      tags:
+        - Pages
+      summary: Create a page with content
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parent:
+                  type: object
+                  properties:
+                    database_id:
+                      type: string
+                properties:
+                  Type:
+                    type: object
+                    properties:
+                      select:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                          color:
+                            type: string
+                  "Score /5":
+                    type: object
+                    properties:
+                      select:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                          color:
+                            type: string
+                  Name:
+                    type: object
+                    properties:
+                      title:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            text:
+                              type: object
+                              properties:
+                                content:
+                                  type: string
+                  Status:
+                    type: object
+                    properties:
+                      select:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                          color:
+                            type: string
+                  Publisher:
+                    type: object
+                    properties:
+                      select:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          name:
+                            type: string
+                          color:
+                            type: string
+                  "Publishing/Release Date":
+                    type: object
+                    properties:
+                      date:
+                        type: object
+                        properties:
+                          start:
+                            type: string
+                          end:
+                            type: string
+                  Link:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                  Summary:
+                    type: object
+                    properties:
+                      rich_text:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                            text:
+                              type: object
+                              properties:
+                                content:
+                                  type: string
+                                link:
+                                  type: string
+                            annotations:
+                              type: object
+                              properties:
+                                bold:
+                                  type: boolean
+                                italic:
+                                  type: boolean
+                                strikethrough:
+                                  type: boolean
+                                underline:
+                                  type: boolean
+                                code:
+                                  type: boolean
+                                color:
+                                  type: string
+                  Read:
+                    type: object
+                    properties:
+                      checkbox:
+                        type: boolean
+                children:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      object:
+                        type: string
+                      type:
+                        type: string
+                      heading_2:
+                        type: object
+                        properties:
+                          rich_text:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                text:
+                                  type: object
+                                  properties:
+                                    content:
+                                      type: string
+                                    link:
+                                      type: string
+                      paragraph:
+                        type: object
+                        properties:
+                          rich_text:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                text:
+                                  type: object
+                                  properties:
+                                    content:
+                                      type: string
+                                    link:
+                                      type: object
+                                      properties:
+                                        url:
+                                          type: string
+      parameters:
+        - name: Notion-Version
+          in: header
+          required: true
+          schema:
+            type: string
+          example: 2022-06-28
+      responses:
+        '200':
+          description: Page successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    example: page
+                  id:
+                    type: string
+                    example: 672b014a-2626-4ada-9211-fb3613d07ae2
+                  created_time:
+                    type: string
+                    example: '2022-03-02T05:24:00.000Z'
+                  last_edited_time:
+                    type: string
+                    example: '2022-03-02T05:24:00.000Z'
+                  created_by:
+                    type: object
+                    properties:
+                      object:
+                        type: string
+                        example: user
+                      id:
+                        type: string
+                        example: 92a680bb-6970-4726-952b-4f4c03bff617
+                  last_edited_by:
+                    type: object
+                    properties:
+                      object:
+                        type: string
+                        example: user
+                      id:
+                        type: string
+                        example: 92a680bb-6970-4726-952b-4f4c03bff617
+                  cover:
+                    type: object
+                    nullable: true
+                  icon:
+                    type: object
+                    nullable: true
+                  parent:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: database_id
+                      database_id:
+                        type: string
+                        example: 8e2c2b76-9e1d-47d2-87b9-ed3035d607ae
+                  archived:
+                    type: boolean
+                    example: false
+                  properties:
+                    type: object
+                    properties:
+                      Score_5:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          select:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              name:
+                                type: string
+                              color:
+                                type: string
+                      Type:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          select:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              name:
+                                type: string
+                              color:
+                                type: string
+                      Publisher:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          select:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              name:
+                                type: string
+                              color:
+                                type: string
+                      Summary:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          rich_text:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                text:
+                                  type: object
+                                  properties:
+                                    content:
+                                      type: string
+                                    link:
+                                      type: string
+                                annotations:
+                                  type: object
+                                  properties:
+                                    bold:
+                                      type: boolean
+                                    italic:
+                                      type: boolean
+                                    strikethrough:
+                                      type: boolean
+                                    underline:
+                                      type: boolean
+                                    code:
+                                      type: boolean
+                                    color:
+                                      type: string
+                      PublishingReleaseDate:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          date:
+                            type: object
+                            properties:
+                              start:
+                                type: string
+                              end:
+                                type: string
+                              time_zone:
+                                type: string
+                      Link:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          url:
+                            type: string
+                      Read:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          checkbox:
+                            type: boolean
+                      Status:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          select:
+                            type: object
+                            properties:
+                              id:
+                                type: string
+                              name:
+                                type: string
+                              color:
+                                type: string
+                      Author:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          multi_select:
+                            type: array
+                            items:
+                              type: object
+                      Name:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                          title:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                type:
+                                  type: string
+                                text:
+                                  type: object
+                                  properties:
+                                    content:
+                                      type: string
+                                    link:
+                                      type: string
+                                annotations:
+                                  type: object
+                                  properties:
+                                    bold:
+                                      type: boolean
+                                    italic:
+                                      type: boolean
+                                    strikethrough:
+                                      type: boolean
+                                    underline:
+                                      type: boolean
+                                    code:
+                                      type: boolean
+                                    color:
+                                      type: string
+                  url:
+                    type: string
+                    example: 'https://www.notion.so/New-Media-Article-672b014a26264ada9211fb3613d07ae2'
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Bad request - [Details about the bad request]
+      '404':
+        description: Not found
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: error
+                code:
+                  type: integer
+                  example: 404
+                message:
+                  type: string
+                  example: Resource not found - [Details about the missing resource]
+      '429':
+        description: Too many requests
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  example: error
+                code:
+                  type: integer
+                  example: 429
+                message:
+                  type: string
+                  example: Too many requests - [Details about rate limit exceeded]
+  /v1/databases/{id}:
+    get:
+      operationId: retrieveDatabase
+      tags:
+        - Databases
+      summary: Retrieve a database
+      description: 'Retrieves a database object using the ID specified in the request path.'
+      parameters:
+        - name: Notion-Version
+          in: header
+          schema:
+            type: string
+          example: '2022-06-28'
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: '{{DATABASE_ID}}'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    example: database
+                  id:
+                    type: string
+                  created_time:
+                    type: string
+                  last_edited_time:
+                    type: string
+                  icon:
+                    type: object
+                    nullable: true
+                    properties:
+                      type:
+                        type: string
+                      emoji:
+                        type: string
+                  cover:
+                    type: object
+                    nullable: true
+                    properties:
+                      type:
+                        type: string
+                      external:
+                        type: object
+                        properties:
+                          url:
+                            type: string
+                  title:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                        text:
+                          type: object
+                          properties:
+                            content:
+                              type: string
+                            link:
+                              type: string
+                        annotations:
+                          type: object
+                          properties:
+                            bold:
+                              type: boolean
+                            italic:
+                              type: boolean
+                            strikethrough:
+                              type: boolean
+                            underline:
+                              type: boolean
+                            code:
+                              type: boolean
+                            color:
+                              type: string
+                        plain_text:
+                          type: string
+                        href:
+                          type: string
+                  properties:
+                    type: object
+                    additionalProperties: true
+                  url:
+                    type: string
+                  archived:
+                    type: boolean
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  code:
+                    type: integer
+                    example: 429
+                  message:
+                    type: string
+    patch:
+      operationId: updateDatabaseProperties
+      tags:
+        - Databases
+      summary: Update database properties
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                properties:
+                  type: object
+                  properties:
+                    WinePairing:
+                      type: object
+                      properties:
+                        name:
+                          type: string
+      parameters:
+        - name: Notion-Version
+          in: header
+          required: true
+          schema:
+            type: string
+            example: '2022-06-28'
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            example: '8e2c2b76-9e1d-47d2-87b9-ed3035d607ae'
+      responses:
+        '200':
+          description: Database successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    example: database
+                  id:
+                    type: string
+                    example: 8e2c2b76-9e1d-47d2-87b9-ed3035d607ae
+                  cover:
+                    type: object
+                    nullable: true
+                  icon:
+                    type: object
+                    nullable: true
+                  created_time:
+                    type: string
+                    example: '2021-04-27T20:38:00.000Z'
+                  last_edited_time:
+                    type: string
+                    example: '2022-02-24T22:08:00.000Z'
+                  title:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        type:
+                          type: string
+                          example: text
+                        text:
+                          type: object
+                          properties:
+                            content:
+                              type: string
+                              example: Ever Better Reading List Title
+                            link:
+                              type: string
+                              nullable: true
+                  properties:
+                    type: object
+                    additionalProperties: true
+                  parent:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                        example: page_id
+                      page_id:
+                        type: string
+                        example: c4d39556-6364-46a1-8a61-ebbb668f7445
+                  url:
+                    type: string
+                    example: 'https://www.notion.so/8e2c2b769e1d47d287b9ed3035d607ae'
+                  archived:
+                    type: boolean
+                    example: false
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  code:
+                    type: integer
+                    example: 400
+                  message:
+                    type: string
+                    example: Invalid request parameters
+        '404':
+          description: Database not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  code:
+                    type: integer
+                    example: 404
+                  message:
+                    type: string
+                    example: Database not found
+        '429':
+          description: Too many requests
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  code:
+                    type: integer
+                    example: 429
+                  message:
+                    type: string
+                    example: Too many requests, please try again later
+  /v1/databases/{id}/query:
+    post:
+      tags:
+        - Databases
+      summary: Filter a database
+      operationId: queryDatabase
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                sorts:
+                  type: array
+                  items:
+                    type: object
+                start_cursor:
+                  type: string
+                page_size:
+                  type: integer
+              example:
+                filter:
+                  property: "Status"
+                  select:
+                    equals: "Reading"
+      parameters:
+        - name: Notion-Version
+          in: header
+          required: true
+          schema:
+            type: string
+          example: '2022-06-28'
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Query results returned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    example: list
+                  results:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        object:
+                          type: string
+                          example: page
+                        id:
+                          type: string
+                        created_time:
+                          type: string
+                        last_edited_time:
+                          type: string
+                        cover:
+                          type: object
+                          nullable: true
+                        icon:
+                          type: object
+                          nullable: true
+                        parent:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                              example: database_id
+                            database_id:
+                              type: string
+                        archived:
+                          type: boolean
+                        properties:
+                          type: object
+                          additionalProperties:
+                            type: object
+                        url:
+                          type: string
+                  next_cursor:
+                    type: string
+                    nullable: true
+                  has_more:
+                    type: boolean
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '429':
+          description: Too many requests
+  /v1/databases/:
+    post:
+      tags:
+        - Databases
+      summary: Create a database
+      operationId: createDatabase
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                parent:
+                  type: object
+                  properties:
+                    type:
+                      type: string
+                    page_id:
+                      type: string
+                title:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      text:
+                        type: object
+                        properties:
+                          content:
+                            type: string
+                          link:
+                            type: string
+                            nullable: true
+                properties:
+                  type: object
+                  additionalProperties: true
+              example:
+                parent:
+                  type: "page_id"
+                  page_id: "your-page-id"
+                title:
+                  - type: "text"
+                    text:
+                      content: "Grocery List"
+                      link: null
+                properties:
+                  Name:
+                    title: {}
+                  Description:
+                    rich_text: {}
+                  InStock:
+                    checkbox: {}
+                  FoodGroup:
+                    select:
+                      options:
+                        - name: "🥦Vegetable"
+                          color: "green"
+                        - name: "🍎Fruit"
+                          color: "red"
+                        - name: "💪Protein"
+                          color: "yellow"
+                  Price:
+                    number:
+                      format: "dollar"
+                  LastOrdered:
+                    date: {}
+                  StoreAvailability:
+                    multi_select:
+                      options:
+                        - name: "Duc Loi Market"
+                          color: "blue"
+                        - name: "Rainbow Grocery"
+                          color: "gray"
+                        - name: "Nijiya Market"
+                          color: "purple"
+                        - name: "Gus's Community Market"
+                          color: "yellow"
+                  PlusOne:
+                    people: {}
+                  Photo:
+                    files: {}
+      responses:
+        '200':
+          description: Database successfully created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    example: database
+                  id:
+                    type: string
+                  created_time:
+                    type: string
+                  last_edited_time:
+                    type: string
+                  title:
+                    type: array
+                    items:
+                      type: object
+                  properties:
+                    type: object
+                  parent:
+                    type: object
+                  url:
+                    type: string
+                  archived:
+                    type: boolean
+        '400':
+          description: Bad request
+        '404':
+          description: Not Found
+        '429':
+          description: Too many requests
+  /v1/pages/{page_id}/properties/{property_id}:
+    get:
+      tags:
+        - Pages
+      summary: Retrieve a page property item
+      operationId: retrievePagePropertyItem
+      parameters:
+        - name: Notion-Version
+          in: header
+          required: true
+          schema:
+            type: string
+          example: '2022-06-28'
+        - name: page_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 'example-page-id'
+        - name: property_id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: 'example-property-id'
+      responses:
+        '200':
+          description: Successfully retrieved the page property item
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                    example: property_item
+                  type:
+                    type: string
+                    example: select
+                  select:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        example: 5c944de7-3f4b-4567-b3a1-fa2c71c540b6
+                      name:
+                        type: string
+                        example: ⭐️⭐️⭐️⭐️⭐️
+                      color:
+                        type: string
+                        example: default
+  /v1/blocks/{id}:
+    patch:
+      operationId: updateBlock
+      tags:
+        - Blocks
+      summary: Update a block
+      description: This endpoint allows you to update block content. [See Full Documentation](https://developers.notion.com/reference/update-a-block)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                paragraph:
+                  type: object
+                  properties:
+                    rich_text:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          type:
+                            type: string
+                          text:
+                            type: object
+                            properties:
+                              content:
+                                type: string
+              example:
+                paragraph:
+                  rich_text:
+                    - type: text
+                      text:
+                        content: hello to you
+      parameters:
+        - name: Notion-Version
+          in: header
+          required: true
+          schema:
+            type: string
+          example: '2022-06-28'
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: '{{BLOCK_ID}}'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                  id:
+                    type: string
+                  created_time:
+                    type: string
+                  last_edited_time:
+                    type: string
+                  has_children:
+                    type: boolean
+                  type:
+                    type: string
+                  paragraph:
+                    type: object
+                    properties:
+                      text:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                            text:
+                              type: object
+                              properties:
+                                content:
+                                  type: string
+                                link:
+                                  type: string
+                            annotations:
+                              type: object
+                              properties:
+                                bold:
+                                  type: boolean
+                                italic:
+                                  type: boolean
+                                strikethrough:
+                                  type: boolean
+                                underline:
+                                  type: boolean
+                                code:
+                                  type: boolean
+                                color:
+                                  type: string
+                            plain_text:
+                              type: string
+                            href:
+                              type: string
+              example:
+                object: block
+                id: 4868767d-9029-4b9d-a41b-652ef4c9c7b9
+                created_time: '2021-08-06T17:46:00.000Z'
+                last_edited_time: '2021-08-12T00:12:00.000Z'
+                has_children: false
+                type: paragraph
+                paragraph:
+                  text:
+                    - type: text
+                      text:
+                        content: hello to you
+                        link: null
+                      annotations:
+                        bold: false
+                        italic: false
+                        strikethrough: false
+                        underline: false
+                        code: false
+                        color: default
+                      plain_text: hello to you
+                      href: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                status: '400'
+                message: 'Invalid block ID or payload'
+    get:
+      operationId: retrieveBlock
+      tags:
+        - Blocks
+      summary: Retrieve a block
+      parameters:
+        - name: Notion-Version
+          in: header
+          required: true
+          schema:
+            type: string
+          example: '2022-06-28'
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+          example: '{{BLOCK_ID}}'
+      responses:
+        '200':
+          description: OK
+          headers:
+            Date:
+              schema:
+                type: string
+                example: Thu, 12 Aug 2021 00:14:42 GMT
+            Content-Type:
+              schema:
+                type: string
+                example: application/json; charset=utf-8
+            Transfer-Encoding:
+              schema:
+                type: string
+                example: chunked
+            Connection:
+              schema:
+                type: string
+                example: keep-alive
+            X-DNS-Prefetch-Control:
+              schema:
+                type: string
+                example: 'off'
+            X-Frame-Options:
+              schema:
+                type: string
+                example: SAMEORIGIN
+            Strict-Transport-Security:
+              schema:
+                type: string
+                example: max-age=5184000; includeSubDomains
+            X-Download-Options:
+              schema:
+                type: string
+                example: noopen
+            X-Content-Type-Options:
+              schema:
+                type: string
+                example: nosniff
+            X-XSS-Protection:
+              schema:
+                type: string
+                example: 1; mode=block
+            Referrer-Policy:
+              schema:
+                type: string
+                example: same-origin
+            Content-Security-Policy:
+              schema:
+                type: string
+                example: (complete CSP header value)
+            X-Content-Security-Policy:
+              schema:
+                type: string
+                example: (complete CSP header value)
+            X-WebKit-CSP:
+              schema:
+                type: string
+                example: (complete CSP header value)
+            Set-Cookie:
+              schema:
+                type: string
+                example: (complete Set-Cookie header value)
+            ETag:
+              schema:
+                type: string
+                example: W/"1ae-RFHXdRIvpQZuh0kRKb9XuWbFwzo"
+            Vary:
+              schema:
+                type: string
+                example: Accept-Encoding
+            CF-Cache-Status:
+              schema:
+                type: string
+                example: DYNAMIC
+            Expect-CT:
+              schema:
+                type: string
+                example: (complete Expect-CT header value)
+            Server:
+              schema:
+                type: string
+                example: cloudflare
+            CF-RAY:
+              schema:
+                type: string
+                example: 67d58148ef562544-SJC
+            Content-Encoding:
+              schema:
+                type: string
+                example: gzip
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  object:
+                    type: string
+                  id:
+                    type: string
+                  parent:
+                    type: object
+                    properties:
+                      type:
+                        type: string
+                      page_id:
+                        type: string
+                  created_time:
+                    type: string
+                  last_edited_time:
+                    type: string
+                  created_by:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                  last_edited_by:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                  has_children:
+                    type: boolean
+                  archived:
+                    type: boolean
+                  type:
+                    type: string
+                  paragraph:
+                    type: object
+                    properties:
+                      rich_text:
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            type:
+                              type: string
+                            text:
+                              type: object
+                              properties:
+                                content:
+                                  type: string
+                                link:
+                                  type: string
+                            annotations:
+                              type: object
+                              properties:
+                                bold:
+                                  type: boolean
+                                italic:
+                                  type: boolean
+                                strikethrough:
+                                  type: boolean
+                                underline:
+                                  type: boolean
+                                code:
+                                  type: boolean
+                                color:
+                                  type: string
+                            plain_text:
+                              type: string
+                            href:
+                              type: string
+              example:
+                object: block
+                id: 4868767d-9029-4b9d-a41b-652ef4c9c7b9
+                parent:
+                  type: page_id
+                  page_id: page-id-example
+                created_time: '2021-08-06T17:46:00.000Z'
+                last_edited_time: '2021-08-12T00:12:00.000Z'
+                created_by:
+                  id: creator-id-example
+                last_edited_by:
+                  id: editor-id-example
+                has_children: false
+                archived: false
+                type: paragraph
+                paragraph:
+                  rich_text:
+                    - type: text
+                      text:
+                        content: hello to you
+                        link: null
+                      annotations:
+                        bold: false
+                        italic: false
+                        strikethrough: false
+                        underline: false
+                        code: false
+                        color: default
+                      plain_text: hello to you
+                      href: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                  message:
+                    type: string
+              example:
+                status: '400'
+                message: 'Invalid block ID'
